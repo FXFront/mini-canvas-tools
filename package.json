@@ -1,7 +1,21 @@
 {
-  "name": "@fx-front/mini-canvas-tools",
+  "name": "@fx-front/mini-canvas-tool",
+  "description": "小程序 canvas 画图工具，使用配置的方式画图。",
   "author": "FXFront",
-  "version": "0.1.0",
+  "version": "0.0.0",
+  "keywords": [
+    "miniprogram",
+    "canvas",
+    "draw posters"
+  ],
+  "homepage": "https://github.com/FXFront/mini-canvas-tools#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FXFront/mini-canvas-tools"
+  },
+  "bugs": {
+    "url": "https://github.com/FXFront/mini-canvas-tools/issues"
+  },
   "license": "MIT",
   "type": "module",
   "main": "./lib/index.js",
@@ -15,14 +29,12 @@
     }
   },
   "files": [
-    "dist",
+    "lib",
     "src"
   ],
-  "engines": {
-    "node": ">=12"
-  },
   "scripts": {
-    "build": "unbuild"
+    "build": "unbuild",
+    "release": "release-it"
   },
   "devDependencies": {
     "@swc/core": "^1.4.2",
@@ -36,8 +48,15 @@
     "tslib": "^2.6.2",
     "typescript": "^5.3.3",
     "unbuild": "^2.0.0",
-    "miniprogram-api-typings": "^3.12.2"
+    "miniprogram-api-typings": "^3.12.2",
+    "release-it": "^16.1.5",
+    "@release-it/conventional-changelog": "^7.0.1"
   },
   "dependencies": {},
-  "packageManager": "pnpm@7.13.2"
+  "packageManager": "pnpm@7.13.2",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org",
+    "scope": "@fx-front"
+  }
 }
