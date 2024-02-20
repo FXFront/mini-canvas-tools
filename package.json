@@ -17,16 +17,9 @@
     "url": "https://github.com/FXFront/mini-canvas-tools/issues"
   },
   "license": "MIT",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./lib/index.d.ts",
-      "default": "./lib/index.js",
-      "require": "./lib/index.js",
-      "import": "./lib/index.mjs"
-    }
-  },
+  "main": "lib/index.js",
+  "module": "lib/index.mjs",
+  "types": "lib/index.d.ts",
   "files": [
     "lib",
     "src"
