@@ -1,5 +1,5 @@
 {
-  "name": "@fx-front/mini-canvas-tool",
+  "name": "@fx-front/mini-canvas-tools",
   "description": "小程序 canvas 画图工具，使用配置的方式画图。",
   "author": "FXFront",
   "version": "0.0.0",
@@ -17,7 +17,6 @@
     "url": "https://github.com/FXFront/mini-canvas-tools/issues"
   },
   "license": "MIT",
-  "type": "module",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "exports": {
