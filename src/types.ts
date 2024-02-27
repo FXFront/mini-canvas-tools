@@ -21,7 +21,7 @@ export interface DrawTextOptions {
   alpha?: number;
   /**
    * 文本的竖直对齐方式。
-   * @default 'normal'
+   * @default 'top'
    */
   baseline?: 'normal' | 'top' | 'middle' | 'bottom';
   /**
@@ -53,7 +53,7 @@ export interface DrawTextOptions {
    * 名称。
    * @default '未说明'
    */
-  name: string;
+  name?: string;
   /**
    * 文字行数。
    * @default 1
@@ -61,9 +61,10 @@ export interface DrawTextOptions {
   rowCount?: number;
   /**
    * 文本装饰。
-   * @default ''
+   *
+   * line-through: 删除线
    */
-  textDecoration?: string;
+  textDecoration?: 'line-through' | '';
   /**
    * 绘制左上角 x 坐标位置。
    * @default 0
@@ -74,6 +75,52 @@ export interface DrawTextOptions {
    * @default 0
    */
   y: number;
+  /**
+   * 文本方向。
+   * @default 'inherit'
+   */
+  direction?: 'inherit' | 'ltr' | 'rtl';
+  /**
+   * 字体间距。
+   * @default 'normal'
+   */
+  fontKerning?: 'auto' | 'none' | 'normal';
+  /**
+   * 字体拉伸。
+   * @default 'normal'
+   */
+  fontStretch?:
+    | 'condensed'
+    | 'expanded'
+    | 'extra-condensed'
+    | 'extra-expanded'
+    | 'normal'
+    | 'semi-condensed'
+    | 'semi-expanded'
+    | 'ultra-condensed'
+    | 'ultra-expanded';
+  /**
+   * 字体变种。
+   * @default 'normal'
+   */
+  fontVariantCaps?:
+    | 'all-petite-caps'
+    | 'all-small-caps'
+    | 'normal'
+    | 'petite-caps'
+    | 'small-caps'
+    | 'titling-caps'
+    | 'unicase';
+  /**
+   * 渲染文本的方式
+   * @default 'auto'
+   */
+  textRendering?: 'auto' | 'geometricPrecision' | 'optimizeLegibility' | 'optimizeSpeed';
+  /**
+   * 绘制文本时单词之间的间距。
+   * @default 0
+   */
+  wordSpacing?: number;
 }
 
 /**
@@ -93,7 +140,7 @@ export interface DrawImageOptions {
    * 图片名称。
    * @default '未说明'
    */
-  name: string;
+  name?: string;
   /**
    * 图片圆角半径。
    * @default 0
@@ -145,12 +192,14 @@ export interface DrawRectOptions {
    */
   lineWidth?: number;
   /**
-   * 绘制方式。
+   * 填充方式。
+   *
+   * stroke: 填充边框 fill: 填充内容 both: 同时填充边框和内容
    * @default 'fill'
    */
   mode?: 'stroke' | 'fill' | 'both';
   /**
-   * 描边颜色。
+   * 边框颜色。
    * @default '#fff'
    */
   strokeStyle?: string;
@@ -173,7 +222,7 @@ export interface DrawRectOptions {
    * 名称。
    * @default '未说明'
    */
-  name: string;
+  name?: string;
   /**
    * 圆角半径。
    * @default 0

@@ -61,10 +61,13 @@ export class CanvasDraw {
   }
 
   /**
-   * canvasDomId: canvas元素id
-   * options : 画图配置
-   *  */
-  constructor(canvasDomId: any, options: DrawOptions[] = [], config?: CanvasConfig, _this?: any) {
+   * @param canvasDomId canvas元素id
+   * @param options 画图配置列表
+   * @param config dpr 配置
+   * @param _this 自定义组件的this（将选择器的选取范围更改为自定义组件内）
+   *
+   */
+  constructor(canvasDomId: string, options: DrawOptions[] = [], config?: CanvasConfig, _this?: any) {
     this.canvasDomId = canvasDomId;
     this.options = options.filter((n) => n) || [];
     this._this = _this;
@@ -167,7 +170,7 @@ export class CanvasDraw {
           }, t);
         };
         let timer = imageFind(0);
-      });
+      }) as Promise<string>;
     } catch (error) {
       log.error('Draw_Api_Error', {
         func: 'drawCanvasToImage',
@@ -232,7 +235,7 @@ export class CanvasDraw {
             break;
           case 'image':
             if (!(combineOption as unknown as DrawnImageOption).url) {
-              console.error(`draw${combineOption.name}的url不能为空`);
+              console.error(`绘制图片的url不能为空`);
               return;
             }
             if (!(combineOption as unknown as DrawnImageOption).img) {
@@ -293,38 +296,62 @@ export class CanvasDraw {
     this.ctx.font = option.font;
     this.ctx.textAlign = option.align;
     this.ctx.textBaseline = option.baseline;
+    if (option.fontKerning) this.ctx.fontKerning = option.fontKerning;
+    if (option.fontStretch) this.ctx.fontStretch = option.fontStretch;
+    if (option.direction) this.ctx.direction = option.direction;
+    if (option.fontVariantCaps) this.ctx.fontVariantCaps = option.fontVariantCaps;
+    if (option.textRendering) this.ctx.textRendering = option.textRendering;
+    if (typeof option?.wordSpacing === 'number') {
+      this.ctx.wordSpacing = `${option.wordSpacing}px`;
+    }
     const arrText = strToArr(option.content);
+    const metrics = this.ctx.measureText(option.content.slice(0, 5));
+    const textHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+    const lineHeight = option.lineHeight || textHeight * 1.4;
+    // 文字顶部的行高空间
+    const topSpace = (lineHeight - textHeight) / 2;
     // 文字溢出处理
     let row = 1;
     let line = '';
-    let textTop = option.y;
+    let textTop = option.y + topSpace;
     for (let n = 0; n < arrText.length; n++) {
       const testLine = line + arrText[n];
       const metrics = this.ctx.measureText(testLine);
       if (metrics.width > option.maxWidth && n > 0) {
         if (row === Number(option.rowCount)) {
           line = `${strToArr(line, 0, strToArr(line).length - 1).join('')}...`;
-          this.fillTextDecoration(option, line, textTop);
+          this.fillTextDecoration({ option, text: line, textTop, lineHeight, topSpace });
           break;
         }
-        this.fillTextDecoration(option, line, textTop);
+        this.fillTextDecoration({ option, text: line, textTop, lineHeight, topSpace });
         line = arrText[n];
-        textTop += option.lineHeight;
+        textTop += lineHeight;
         row += 1;
       } else {
         line = testLine;
       }
     }
-    this.fillTextDecoration(option, line, textTop);
+    this.fillTextDecoration({ option, text: line, textTop, lineHeight, topSpace });
   }
 
   // 画文字装饰
-  fillTextDecoration(option: Required<DrawTextOptions>, text: string, textTop: number) {
-    const tTop = textTop + option.lineHeight - 5;
-    this.ctx.fillText(text, option.x, tTop);
+  fillTextDecoration({
+    text,
+    option,
+    textTop,
+    lineHeight,
+    topSpace,
+  }: {
+    option: Required<DrawTextOptions>;
+    text: string;
+    textTop: number;
+    lineHeight: number;
+    topSpace: number;
+  }) {
+    this.ctx.fillText(text, option.x, textTop);
     switch (option.textDecoration) {
       case 'line-through': {
-        const y = tTop - option.lineHeight / 4;
+        const y = textTop + lineHeight / 2 - topSpace;
         this.ctx.moveTo(option.x - 2, y);
         this.ctx.lineTo(option.x + 2 + this.ctx.measureText(text).width, y);
         this.ctx.lineWidth = '1';
