@@ -1,5 +1,11 @@
 # @fx-front/mini-canvas-tools
 
+<p>
+<a href="https://www.npmjs.com/package/@fx-front/mini-canvas-tools"><img alt="npm" src="https://img.shields.io/npm/v/@fx-front/mini-canvas-tools?style=flat-square"></a>
+<img alt="npm" src="https://img.shields.io/npm/dt/@fx-front/mini-canvas-tools?style=flat-square">
+<br>
+</p>
+
 小程序 canvas 画图工具，支持以配置方式画图。
 
 目前支持：微信小程序、Taro。
