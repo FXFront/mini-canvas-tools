@@ -1,6 +1,6 @@
 module.exports = {
   hooks: {
-    'before:release': ['pnpm eslint:fix', 'pnpm build'],
+    'before:release': ['pnpm build'],
     'after:release': "echo 'Release completed ✅'",
   },
   git: {
