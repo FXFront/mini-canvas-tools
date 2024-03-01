@@ -2,7 +2,7 @@ import { Env } from './env';
 
 import defaultOptions from './defaultOptions';
 import { DrawImageOptions, DrawOptions, DrawRectOptions, DrawTextOptions } from './types';
-import { saveToAlbumWithAuthorize, strToArr, toType } from './utils';
+import { saveToAlbumWithAuthorize, strToArr } from './utils';
 import log from './log';
 type DrawnImageOption = Required<DrawImageOptions> & {
   img: string;
@@ -30,8 +30,6 @@ export class CanvasDraw {
       width,
       height,
     });
-    canvas.width = width;
-    canvas.height = height;
 
     const context = canvas.getContext('2d') as any;
 
@@ -99,26 +97,30 @@ export class CanvasDraw {
 
   /**
    * 绘制canvas 并生成图片
-   * option : 生成图片配置
-   * isSave : 是否保存相册
-   * return promise (tempFilePath)
+   *
+   * @param option 生成图片配置
+   * @param option.isSave 是否保存相册
+   * @param option.needWhiteScreenDetection 是否需要白屏检测（防止PC端输出的图片是白屏）
+   *
+   * @return promise (tempFilePath)
    *  */
   async drawCanvasToImage(
-    option:
-      | {
-          fileType?: 'jpg' | 'png';
-          /** 图片的质量，目前仅对 jpg 有效。取值范围为 (0, 1]，不在范围内时当作 1.0 处理。 */
-          quality?: number;
-        }
-      | boolean = {},
-    isSave = false,
+    option: {
+      /** 图片类型 默认 jpg。 */
+      fileType?: 'jpg' | 'png';
+      /** 图片的质量，目前仅对 jpg 有效。取值范围为 (0, 1]，不在范围内时当作 1.0 处理。 */
+      quality?: number;
+      /** 是否保存到相册 */
+      isSave?: boolean;
+      /** 是否需要白屏检测，防止 PC 端导出图片为白屏的情况。白屏检测验证十字线区域是否为白色，检测到到十字线全为白色时，重新生成图片。 */
+      needWhiteScreenDetection?: boolean;
+    } = {
+      isSave: false,
+      needWhiteScreenDetection: false,
+    },
   ) {
     try {
-      if (toType(option) === 'boolean') {
-        isSave = option as boolean;
-        option = {};
-      }
-      const { fileType = 'jpg', quality = 1 } = option as any;
+      const { fileType = 'jpg', quality = 1, isSave, needWhiteScreenDetection } = option as any;
       await this.drawCanvas();
       return new Promise((resolve, reject) => {
         const getImageFilePath = (): Promise<string> =>
@@ -149,7 +151,7 @@ export class CanvasDraw {
         const imageFind = (t: number) => {
           return setTimeout(async () => {
             const tmpPath = await getImageFilePath();
-            const res = await CanvasDraw.isAllWhite(tmpPath);
+            const res = needWhiteScreenDetection ? await CanvasDraw.isAllWhite(tmpPath) : false;
             if (res) {
               // t为420时已经经过了3s
               if (t < 420) {
@@ -165,7 +167,7 @@ export class CanvasDraw {
             } else {
               clearTimeout(timer);
               resolve(tmpPath);
-              if (isSave) saveToAlbumWithAuthorize(tmpPath);
+              if (isSave && tmpPath) saveToAlbumWithAuthorize(tmpPath);
             }
           }, t);
         };
